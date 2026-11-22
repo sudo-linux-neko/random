@@ -1,0 +1,35 @@
+{
+  "engine": "universe-engine v1.0 pure C++ AVX2",
+  "data": {
+    "dir": "./data",
+    "train_ratio": 0.7,
+    "test_ratio": 0.3,
+    "no_leak": true,
+    "execution": "next_bar_open",
+    "warmup_bars": 100
+  },
+  "costs": {
+    "commission_bps": 5,
+    "slippage_bps": 5,
+    "note": "both applied per side, next-bar execution to avoid lookahead"
+  },
+  "search": {
+    "indicators": 40,
+    "combo_min": 1,
+    "combo_max": 7,
+    "iterations": 200000,
+    "seed": 42,
+    "ranking": "composite = sharpe*5 + ret*0.05 + pf*1 - dd*0.4 + win*0.02",
+    "parallel": "all cores via hardware_concurrency"
+  },
+  "compile": {
+    "flags": "-O3 -march=native -mavx2 -mfma -flto -DNDEBUG -ffast-math -funroll-loops",
+    "compiler": "g++ 14.2"
+  },
+  "notes": {
+    "1min_20y_stocks": "No free source gives 20y 1min for stocks (Yahoo limit 7d). Use daily 20y free via yfinance OR crypto 1m via Binance (8y). For 1000 tickers * 20y daily = ~5M bars (~50MB) fine on 7.6GB. 1m would be 2B bars (~80GB) not feasible on laptop - engine streams ticker-by-ticker to handle.",
+    "free_sources": "yfinance daily 20y (stocks/ETFs), Binance daily/1m (crypto), Stooq fallback",
+    "progress": "AVX2 progress bar with ETA, it/s, %",
+    "results": "results/top_strategies.csv, results/all_results.csv, results/best_strategy.json"
+  }
+}
